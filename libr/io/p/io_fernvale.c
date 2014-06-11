@@ -195,10 +195,20 @@ static int __write(RIO *io, RIODesc *fd, const ut8 *buf, int len) {
 	/* Update the SHA1 sum, if necessary */
 	if (do_sha1_1bl) {
 		RHash *h = r_hash_new(R_TRUE, R_HASH_SHA1);
-		const ut8 *c = r_hash_do_sha1(h, fv->backbuffer + 0x800, 0x28f4 - 0x800);
+		const ut8 *c = r_hash_do_sha1(h, fv->backbuffer + 0x800, 0x2914 - 32 - 0x800);
 		int i;
 		for (i = 0; i < 10; i++) {
-			fv->words[(0x28f4 / 2) + i] = (c[i * 2] << 0) | (c[i * 2 + 1] << 8);
+			fv->words[((0x2914 - 32) / 2) + i] = (c[i * 2] << 0) | (c[i * 2 + 1] << 8);
+		}
+		r_hash_free(h);
+	}
+
+	if (do_sha1_1bl) {
+		RHash *h = r_hash_new(R_TRUE, R_HASH_SHA1);
+		const ut8 *c = r_hash_do_sha1(h, fv->backbuffer + 0x3400, 0xb704 - 32 - 0x3400);
+		int i;
+		for (i = 0; i < 10; i++) {
+			fv->words[((0xb704 - 32) / 2) + i] = (c[i * 2] << 0) | (c[i * 2 + 1] << 8);
 		}
 		r_hash_free(h);
 	}
